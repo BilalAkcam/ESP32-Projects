@@ -1,3 +1,13 @@
+/*
+
+      ***** ESP32 ile RFID ve servo motor kontrolu sağlanarak akıllı gecis. *****
+
+                              BILAL HABES AKCAM
+                                  10.08.2022
+       
+*/
+
+
 #define REMOTEXY_MODE__ESP32CORE_WIFI_POINT
 #include <WiFi.h>
 #include <RemoteXY.h>
@@ -24,12 +34,12 @@ boolean iterExceeded=false;
 boolean checkUser=false;
 byte deneme=5;
 
-
+// WI-FI Init ayarlari
 #define REMOTEXY_WIFI_SSID "RD_door"
 #define REMOTEXY_WIFI_PASSWORD "EndArge4242"
 #define REMOTEXY_SERVER_PORT 6377
 
-
+//Mobil arayüz tasarimi
 #pragma pack(push, 1)
 uint8_t RemoteXY_CONF[] =  
 { 255, 1, 0, 0, 0, 69, 0, 16, 113, 1, 129, 0, 10, 68, 45, 5, 130, 69, 110, 100,
@@ -64,6 +74,7 @@ int servoPin = 17;
 
 void setup()
 {
+  //Init aryarlari
   Serial.begin(9600);
   pinMode(Button, INPUT);
   pinMode(LED, OUTPUT);
@@ -87,60 +98,56 @@ void setup()
 void loop()
 {
 
-//Servo Test
+/* *** Servo Motor Test Kodu ***
 
-//  pos = 0;
-//    myservo.write(pos);
-//    delay(500);
-//    pos =45 ;
-//    myservo.write(pos);
-//    delay(500);
-//    pos = 90;
-//    myservo.write(pos);
-//    delay(500);
-//    pos = 135;
-//    myservo.write(pos);
-//    delay(500);
-//    pos = 170;
-//    myservo.write(pos);
-//    delay(500);
+    pos = 0;
+    myservo.write(pos);
+    delay(500);
+    pos =45 ;
+    myservo.write(pos);
+    delay(500);
+    pos = 90;
+    myservo.write(pos);
+    delay(500);
+    pos = 135;
+    myservo.write(pos);
+    delay(500);
+    pos = 170;
+    myservo.write(pos);
+    delay(500);
 
-ButtonValue = digitalRead(Button);
+*/
+
+ButtonValue = digitalRead(Button); //Buton Degeri Okunur
   
+  //Mobil uygulamadan butonuna basilir ise yesil led yanar ve kapi acilir.
   if (RemoteXY.pushSwitch_1 != 0)
   {
-    //Serial.println("Giris Basarili");
-    //delay(250);
-  digitalWrite(15,HIGH);
-  delay(250);
+    Serial.println("Giris Basarili");
+    delay(250);
+    digitalWrite(15,HIGH);
+    delay(250);
     pos = 175;
     myservo.write(pos);
     delay(500);
-  digitalWrite(15,LOW);
+    digitalWrite(15,LOW);
     RemoteXY.pushSwitch_1 = 0;
 
   }
-  
+  //Mobil uygulamdaki buton aktif değil ise kirmizi led yanar ve kapi acilmamaktadir.
   else if (RemoteXY.pushSwitch_1 == 0) {
     pos = 90;
     myservo.write(pos);
     delay(100);
   }
   RemoteXY_Handler ();
-/*if ( ! mfrc522.PICC_IsNewCardPresent()){
-   return;
-}
- if ( ! mfrc522.PICC_ReadCardSerial()){
-    return;
-} */  
   
-  
+  //Eger yonetici kart aktifse veya butona basildiysa mavi led yanar ve yeni RFID kart sahibinin ID'si EEPROMA kaydedilir.
   if (ButtonValue == 1) {
-    Serial.print(EEPROM.read(31));
-    //butonflag=1;
-     digitalWrite(3, HIGH);
+      Serial.print(EEPROM.read(31));
+      digitalWrite(3, HIGH);
      
-     Serial.println(EEPROM.read(4*0));
+      Serial.println(EEPROM.read(4*0));
       Serial.println(EEPROM.read(4*0+1));
       Serial.println(EEPROM.read(4*0+2));
       Serial.println(EEPROM.read(4*0+3));
@@ -154,7 +161,7 @@ ButtonValue = digitalRead(Button);
     return;  
   }
 
-
+    //Personel sayisi 40 olarak sinirlandirmistir. Dilenen personel sayisina gore kod revize edilebilir.
     for(int i=0; i<4; i++){
       if(iter==40){
         iterExceeded=true;
@@ -191,13 +198,6 @@ ButtonValue = digitalRead(Button);
    
        mfrc522.PICC_HaltA();
 
-    
-  /* 
-    mfrc522.uid.uidByte[0]
-    mfrc522.uid.uidByte[1] 
-    mfrc522.uid.uidByte[2] 
-    mfrc522.uid.uidByte[3]
-  */
   }
   
   if (ButtonValue == 0) {
@@ -209,52 +209,9 @@ ButtonValue = digitalRead(Button);
   if ( ! mfrc522.PICC_ReadCardSerial()){      
     return;  
   }
-  /*
-  if(iterExceeded){
-    for(int i =0; i<40; i++){
-      checkUser=true;
-      for(int j=0; j<4; j++){
-        if(mfrc522.uid.uidByte[j] != userIdList[i][j]){ 
-            checkUser=false;
-        } 
-      }
-      
-      if(checkUser){
-          //motor hareket
-           delay(250);
-    pos = -25;
-    myservo.write(pos);
-    delay(500);
-    pos = 90;
-    myservo.write(pos);
-    delay(1000);
-        } 
-    }
-  }else{
-    for(int i =0; i<iter; i++){
-      checkUser=true;
-      for(int j=0; j<4; j++){
-        if(mfrc522.uid.uidByte[j] != userIdList[i][j]){ 
-           checkUser=false;
-        } 
-      }
-      
-      if(checkUser){
-          //motor hareket
-    delay(250);
-    pos = -25;
-    myservo.write(pos);
-    delay(500);
-    pos = 90;
-    myservo.write(pos);
-    delay(1000);
-        } 
-    }  
-  }
-}//if button ==0
-*/
 
-
+//Yeni tanimlanacak kullanici ID'si EEPROM'dan kontrol edilmektedir
+//Eger tanimlanacak olan kullanici hafizaya kayitli ise hafizayi doldurmamak adina tekrar kayit yapilmaz
 checkUser=false;
   for(int i=0; i<40; i++){
     if(EEPROM.read(4*i) == mfrc522.uid.uidByte[0]){
@@ -269,6 +226,8 @@ checkUser=false;
     }
   }
 
+
+//checkUser değiskenin durumuna gore yesil led yakilir ve kapi acilir.
 if(checkUser){
 
   digitalWrite(15,HIGH);
@@ -286,28 +245,10 @@ if(checkUser != 1){
   }
 
   
-  
 }
   
-
       mfrc522.PICC_HaltA();
 
-    
-   /* delay(250);
-    pos = -25;
-    myservo.write(pos);
-    delay(500);
-    pos = 90;
-    myservo.write(pos);
-    delay(1000);
-  */
-  
- /*else{                                 //Yetkisiz girişte içerideki komutlar çalıştırılır.
-      
-("Yetkisiz Kart");
-      ekranaYazdir();
-    }
-*/
 }
 
 
@@ -316,7 +257,7 @@ if(checkUser != 1){
 
 
 
-
+//Serial Ekrana Durum Yazdirma Fonksiyonu
 
 void ekranaYazdir(){
   Serial.print("ID Numarasi: ");
