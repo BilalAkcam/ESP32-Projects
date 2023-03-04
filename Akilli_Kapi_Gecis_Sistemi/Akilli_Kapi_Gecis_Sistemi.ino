@@ -257,7 +257,7 @@ if(checkUser != 1){
 
 
 
-//Serial Ekrana Durum Yazdirma Fonksiyonu
+//Serial Ekrana ID'nyi Yazdirmaya Yarayan Fonksiyon
 
 void ekranaYazdir(){
   Serial.print("ID Numarasi: ");
