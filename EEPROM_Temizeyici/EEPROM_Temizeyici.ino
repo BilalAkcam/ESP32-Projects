@@ -1,5 +1,7 @@
 #include <EEPROM.h>
 
+//Kodu Bir Kere Run Etmeniz Yeterli Olacaktir.
+
 
 void setup() {
 
