@@ -1,10 +1,12 @@
 /*
 
-      ***** ESP32 ile RFID ve servo motor kontrolu sağlanarak akıllı gecis. *****
-
-                              BILAL HABES AKCAM
-                                  10.08.2022
+          
+                          BILAL HABES AKCAM
+                             10.08.2022
        
+          ***** Smart Pass System by ESP32 and RFID *****
+
+          
 */
 
 
@@ -142,7 +144,7 @@ ButtonValue = digitalRead(Button); //Buton Degeri Okunur
   }
   RemoteXY_Handler ();
   
-  //Eger yonetici kart aktifse veya butona basildiysa mavi led yanar ve yeni RFID kart sahibinin ID'si EEPROMA kaydedilir.
+  //Eger yonetici kart aktifse veya tonetici butonuna basildiysa mavi led yanar ve yeni RFID kart sahibinin ID'si EEPROMA kaydedilir.
   if (ButtonValue == 1) {
       Serial.print(EEPROM.read(31));
       digitalWrite(3, HIGH);
